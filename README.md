@@ -8,6 +8,16 @@
 
 
 
+## 开源地址
+
+GitHub: https://github.com/coder-xiaomo/nuclear_data_spider
+
+Gitee: https://gitee.com/coder-xiaomo/nuclear_data_spider
+
+自建仓库: https://git.only4.work/coder-xiaomo/nuclear_data_spider
+
+
+
 ## 目录结构
 
 - 后端服务：backend
