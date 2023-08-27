@@ -4,7 +4,7 @@
 
 数据来源：[国家核安全局](https://nnsa.mee.gov.cn/) - [辐射环境监测数据](https://data.rmtc.org.cn/gis)
 
-视频版说明(B站)：[<链接>]()
+视频版说明(B站)：https://www.bilibili.com/video/BV1kh4y127Mg/
 
 
 
