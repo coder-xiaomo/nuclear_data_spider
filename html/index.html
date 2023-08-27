@@ -1,0 +1,204 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>辐射环境历史数据查询</title>
+</head>
+
+<body>
+    <h1>辐射环境历史数据查询</h1>
+    <p>可查询自 2023-08-25 起的国家核安全局辐射环境监测数据历史数据</p>
+    <hr>
+    <form id="form">
+        <label for="type">监测点：</label>
+        <select id="type" name="type" required>
+            <option value="0">环境质量监测点</option>
+            <option value="1">核电厂监测点</option>
+        </select><br>
+
+        <label for="name">名称：</label>
+        <select id="name" name="name" required></select><br>
+
+        <label for="location">位置：</label>
+        <select id="location" name="location" required></select><br>
+
+        <label for="date">日期：</label>
+        <input type="date" id="date" name="date" required min="2023-08-25"><br>
+        <button type="submit" id="submit-btn">查询</button>
+    </form>
+    <hr>
+
+    <div id="result"></div>
+
+    <div class="footer">
+        <p>
+            开放接口：按月批量查询所有点位数据接口<br>
+
+            备注：目前数据较少。
+        </p>
+        <p>
+            开源项目：本项目由程序员小墨开发并开源，仅作学习研究使用。<br>
+            <a target="_blank" href="#">GitHub</a>
+            <a target="_blank" href="#">Gitee</a>
+            <a target="_blank" href="#">自建仓库</a>
+        </p>
+        <p>
+            特别说明：请勿使用爬虫爬取本站接口，感谢！如需全部历史数据，请<a href="https://www.only4.work/about/feedback/"
+                target="_blank">点击留言</a>，我会尽量在当日将数据打包发送回您的邮箱。
+        </p>
+        <p>
+
+        </p>
+        <p>
+            数据来源：<a href="https://nnsa.mee.gov.cn/" target="_blank">国家核安全局</a>
+            -
+            <a href="https://data.rmtc.org.cn/gis" target="_blank">辐射环境监测数据</a>
+        </p>
+        <p>
+            免责声明：本站仅记录自 2023-08-25 起的辐射环境监测数据历史值，不对数据来源真实性做保证，数据使用权请查阅上方数据来源自行获取，仅通过技术层面保存监测数据历史记录，方便学术研究使用。
+        </p>
+    </div>
+    <script src="./jquery.min.js"></script>
+    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+    <script>
+        function setDefalutValue() {
+            // 日期当前值 2天前
+            var today = new Date(Date.now() - 2 * 24 * 3600 * 1000); // 获取当前的日期对象
+            var day = today.getDate(); // 获取当前的日
+            var month = today.getMonth() + 1; // 获取当前的月，需要加1
+            var year = today.getFullYear(); // 获取当前的年
+            if (day < 10) { // 如果日小于10，前面补0
+                day = "0" + day;
+            }
+            if (month < 10) { // 如果月小于10，前面补0
+                month = "0" + month;
+            }
+            var date = year + "-" + month + "-" + day; // 拼接成 yyyy-MM-dd 格式的字符串
+            document.getElementById("date").value = date; // 将字符串赋值给日期输入框
+
+            // 日期最大值 1天前
+            var today = new Date(Date.now() - 24 * 3600 * 1000); // 获取当前的日期对象
+            var day = today.getDate(); // 获取当前的日
+            var month = today.getMonth() + 1; // 获取当前的月，需要加1
+            var year = today.getFullYear(); // 获取当前的年
+            if (day < 10) { // 如果日小于10，前面补0
+                day = "0" + day;
+            }
+            if (month < 10) { // 如果月小于10，前面补0
+                month = "0" + month;
+            }
+            var date = year + "-" + month + "-" + day; // 拼接成 yyyy-MM-dd 格式的字符串
+            document.getElementById("date").max = date; // 将字符串赋值给日期输入框
+        }
+
+        // // 在页面加载时发送get请求，获取所有的名称和位置，并填充到下拉框中
+        // $(document).ready(function () {
+        //     $.get('http://localhost:3000/nuclear_data/options', function (res) {
+        //         // 遍历返回的数组，将每个名称和位置添加到对应的下拉框中
+        //         for (let item of res) {
+        //             $('#name').append(`<option value="${item.name}">${item.name}</option>`);
+        //             $('#location').append(`<option value="${item.location}">${item.location}</option>`);
+        //         }
+        //     });
+        // });
+
+        // // 在页面加载时发送get请求，获取所有的名称，并填充到名称的下拉框中
+        // $(document).ready(function () {
+        //     $.get('http://localhost:3000/nuclear_data/options', function (res) {
+        //         // 遍历返回的数组，将每个名称添加到名称的下拉框中
+        //         for (let item of res) {
+        //             $('#name').append(`<option value="${item.name}">${item.name}</option>`);
+        //         }
+        //         // 触发名称的下拉框的change事件，以获取对应的位置
+        //         $('#name').trigger('change');
+        //     });
+        // });
+
+        // 在页面加载时发送get请求，获取所有的名称，并填充到名称的下拉框中
+        $(document).ready(function () {
+
+            setDefalutValue()
+
+            // 触发名称的下拉框的change事件，以获取对应的位置
+            $('#type').trigger('change');
+        });
+
+        // 绑定名称的下拉框的change事件，当选择某个名称时，发送post请求，获取对应的名称，并填充到名称的下拉框中
+        $('#type').on('change', function () {
+            // 获取选择的名称
+            let type = $(this).val();
+            // 发送post请求
+            $.post('http://localhost:3000/nuclear_data/options/names', { type: type }, function (res) {
+                // 清空位置的下拉框
+                $('#name').empty();
+                // 遍历返回的数组，将每个位置添加到位置的下拉框中
+                for (let item of res) {
+                    $('#name').append(`<option value="${item.name}">${item.name}</option>`);
+                }
+                // 触发名称的下拉框的change事件，以获取对应的位置
+                $('#name').trigger('change');
+            });
+        });
+
+        // 绑定名称的下拉框的change事件，当选择某个名称时，发送post请求，获取对应的位置，并填充到位置的下拉框中
+        $('#name').on('change', function () {
+            // 获取选择的名称
+            let type = $('#type').val();
+            let name = $(this).val();
+            // 发送post请求
+            $.post('http://localhost:3000/nuclear_data/options/locations', { type: type, name: name }, function (res) {
+                // 清空位置的下拉框
+                $('#location').empty();
+                // 遍历返回的数组，将每个位置添加到位置的下拉框中
+                for (let item of res) {
+                    $('#location').append(`<option value="${item.location}">${item.location}</option>`);
+                }
+            });
+        });
+
+        $('#location').on('change', function () {
+            $('#submit-btn').trigger('click');
+        });
+
+        $('#date').on('change', function () {
+            $('#submit-btn').trigger('click');
+        });
+
+
+        function rtime(timeStr) {
+            let date = new Date(timeStr)
+            // return new Date(date.getTime() + 8 * 3600 * 1000).toISOString().replace('T', ' ').replace('Z', '')
+            return new Date(date.getTime() + 8 * 3600 * 1000).toISOString().substring(0, 10)
+        }
+
+        // 绑定表单提交事件
+        $('#form').on('submit', function (e) {
+            e.preventDefault(); // 阻止默认行为
+            // 获取表单数据
+            let data = $(this).serialize();
+            // 发送post请求
+            $.post('http://localhost:3000/nuclear_data', data, function (res) {
+                // 清空结果区域
+                $('#result').empty();
+                // 判断是否有数据返回
+                if (res.length > 0) {
+                    // 遍历返回的数组，显示每条数据的信息
+                    for (let item of res) {
+                        $('#result').append(`<p>名称：${item.name}</p>`);
+                        $('#result').append(`<p>位置：${item.location}</p>`);
+                        $('#result').append(`<p>值：${item.value}</p>`);
+                        $('#result').append(`<p>日期：${rtime(item.date)} <span style="color: grey; font-size: small;">(${item.date})</span></p>`);
+                        $('#result').append(`<p>类型：${item.type}</p>`);
+                        $('#result').append(`<p>数据更新日期：${item.time || '暂无'}</p>`);
+                        $('#result').append(`<hr>`); // 分隔线
+                    }
+                } else {
+                    // 没有数据返回，显示提示信息
+                    $('#result').text('没有找到符合条件的数据');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
