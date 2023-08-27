@@ -16,23 +16,41 @@ const mysqlConfig = {
     database: 'open_data' // 数据库名称
 }
 
-main()
-
+// main()
 async function main() {
-    await doFetch('0')
-    await doFetch('1')
+    try {
+        await doFetch('0')
+    } catch (err) {
+        console.error('type=0 爬取时出现错误，正在重试...')
+        try {
+            await doFetch('0')
+        } catch (err) {
+            console.error('type=0 爬取时出现错误，爬取失败')
+        }
+    }
+    try {
+        await doFetch('1')
+    } catch (err) {
+        console.error('type=1 爬取时出现错误，正在重试...')
+        try {
+            await doFetch('1')
+        } catch (err) {
+            console.error('type=1 爬取时出现错误，爬取失败')
+        }
+    }
     console.log('爬取完成')
 }
 
 //
 async function doFetch(type) {
     const url = 'https://data.rmtc.org.cn/gis/PubIndexM.html?type=' + type
-    await new Promise((resolve) => {
+    await new Promise((resolve, reject) => {
         // 发送请求，获取网页内容
         request(url, async (error, response, body) => {
             if (error) {
                 console.error(error);
-                return
+                // return
+                reject()
             }
 
             // fs.writeFileSync('output/html.json', body, 'utf-8');
@@ -242,4 +260,8 @@ function saveToDb(data) {
             });
         }
     });
+}
+
+module.exports = {
+    run: main,
 }

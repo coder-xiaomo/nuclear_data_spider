@@ -61,6 +61,11 @@
     <script src="./jquery.min.js"></script>
     <!-- <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
     <script>
+        const host = location.host.includes('localhost') || location.host.includes('127.0.0.1')
+            ? 'http://localhost:35590/'
+            : '/api/'
+        console.log('host', host)
+
         function setDefalutValue() {
             // 日期当前值 2天前
             var today = new Date(Date.now() - 2 * 24 * 3600 * 1000); // 获取当前的日期对象
@@ -93,7 +98,7 @@
 
         // // 在页面加载时发送get请求，获取所有的名称和位置，并填充到下拉框中
         // $(document).ready(function () {
-        //     $.get('http://localhost:3000/nuclear_data/options', function (res) {
+        //     $.get(host + 'nuclear_data/options', function (res) {
         //         // 遍历返回的数组，将每个名称和位置添加到对应的下拉框中
         //         for (let item of res) {
         //             $('#name').append(`<option value="${item.name}">${item.name}</option>`);
@@ -104,7 +109,7 @@
 
         // // 在页面加载时发送get请求，获取所有的名称，并填充到名称的下拉框中
         // $(document).ready(function () {
-        //     $.get('http://localhost:3000/nuclear_data/options', function (res) {
+        //     $.get(host + 'nuclear_data/options', function (res) {
         //         // 遍历返回的数组，将每个名称添加到名称的下拉框中
         //         for (let item of res) {
         //             $('#name').append(`<option value="${item.name}">${item.name}</option>`);
@@ -128,7 +133,7 @@
             // 获取选择的名称
             let type = $(this).val();
             // 发送post请求
-            $.post('http://localhost:3000/nuclear_data/options/names', { type: type }, function (res) {
+            $.post(host + 'nuclear_data/options/names', { type: type }, function (res) {
                 // 清空位置的下拉框
                 $('#name').empty();
                 // 遍历返回的数组，将每个位置添加到位置的下拉框中
@@ -146,7 +151,7 @@
             let type = $('#type').val();
             let name = $(this).val();
             // 发送post请求
-            $.post('http://localhost:3000/nuclear_data/options/locations', { type: type, name: name }, function (res) {
+            $.post(host + 'nuclear_data/options/locations', { type: type, name: name }, function (res) {
                 // 清空位置的下拉框
                 $('#location').empty();
                 // 遍历返回的数组，将每个位置添加到位置的下拉框中
@@ -177,7 +182,7 @@
             // 获取表单数据
             let data = $(this).serialize();
             // 发送post请求
-            $.post('http://localhost:3000/nuclear_data', data, function (res) {
+            $.post(host + 'nuclear_data', data, function (res) {
                 // 清空结果区域
                 $('#result').empty();
                 // 判断是否有数据返回

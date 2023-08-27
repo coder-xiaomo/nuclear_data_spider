@@ -2,6 +2,8 @@ const express = require('express');
 const mysql = require('mysql');
 const app = express();
 
+const port = 35590
+
 // 创建连接池
 const pool = mysql.createPool({
     connectionLimit: 5, // 设置连接池的大小
@@ -202,7 +204,14 @@ app.post('/api/nuclear_data/export', function (req, res) {
     });
 });
 
-// 启动服务器
-app.listen(3000, function () {
-    console.log('Server is running on port 3000');
-});
+
+function serve() {
+    // 启动服务器
+    app.listen(port, function () {
+        console.log('Server is running on port ' + port);
+    });
+}
+
+module.exports = {
+    serve,
+}
